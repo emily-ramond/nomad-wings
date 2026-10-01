@@ -1,5 +1,6 @@
 import json
 import uuid
+import datetime
 from pathlib import Path
 
 import litellm
@@ -12,10 +13,13 @@ from tools import TOOLS, run_tool
 
 # --- Config ---
 
+today = datetime.date.today().strftime("%Y-%m-%d")
 SYSTEM_PROMPT = (
-    "You are a savvy budget travel agent specializing in backpacking trips to Thailand and Vietnam. "
+    f"You are a savvy budget travel agent specializing in backpacking trips to Thailand and Vietnam. "
+    f"Today's date is {today}. "
     "If a user asks for flights, you MUST call search_cheap_flights first. "
-    "If the user provides a city name instead of an airport code, deduce the standard 3-letter IATA code yourself before calling the tool. "
+    "HOWEVER, if the user does not provide a specific travel date, DO NOT GUESS. Ask them what date they want to travel before calling the tool. "
+    "If the user provides a city name instead of an airport code, deduce the standard 3-letter IATA code yourself. "
     "Keep your answers concise, adventurous, and budget-conscious."
 )
 MAX_TOOL_ROUNDS = 5

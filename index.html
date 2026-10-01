@@ -7,6 +7,7 @@
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
         <style>
             :root {
                 --primary: #059669;
@@ -257,6 +258,20 @@
                 opacity: 0.4;
                 cursor: not-allowed;
             }
+            .msg-bubble p {
+                margin-bottom: 0.5rem;
+            }
+            .msg-bubble p:last-child {
+                margin-bottom: 0;
+            }
+            .msg-bubble ul, .msg-bubble ol {
+                margin-left: 1.25rem;
+                margin-bottom: 0.5rem;
+            }
+            .msg-bubble h1, .msg-bubble h2, .msg-bubble h3 {
+                font-size: 1.05rem;
+                margin: 0.75rem 0 0.4rem 0;
+            }
         </style>
     </head>
     <body>
@@ -300,7 +315,7 @@
 
                 const bubble = document.createElement("div");
                 bubble.className = "msg-bubble";
-                bubble.textContent = text;
+                bubble.innerHTML = marked.parse(text);
 
                 group.appendChild(bubble);
                 messages.appendChild(group);
@@ -363,7 +378,7 @@
 
                     const replyBubble = document.createElement("div");
                     replyBubble.className = "msg-bubble";
-                    replyBubble.textContent = data.response;
+                    replyBubble.innerHTML = marked.parse(data.response);
                     assistantGroup.appendChild(replyBubble);
                     
                 } catch (e) {
