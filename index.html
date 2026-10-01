@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>NomadWings | Thailand & Vietnam Backpacker Assistant</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+        <style>
+            :root {
+                --primary: #059669;
+                --primary-hover: #047857;
+                --primary-soft: #ecfdf5;
+                --bg: #f8fafc;
+                --card-bg: #ffffff;
+                --text-main: #0f172a;
+                --text-muted: #64748b;
+                --border: #e2e8f0;
+                --tool-border: #f59e0b;
+                --tool-bg: #fffbeb;
+            }
+
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+
+            body {
+                font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+                background-color: var(--bg);
+                color: var(--text-main);
+                height: 100vh;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 1.5rem;
+            }
+
+            #app-container {
+                width: 100%;
+                max-width: 880px;
+                height: 90vh;
+                background: var(--card-bg);
+                border-radius: 18px;
+                box-shadow: 0 12px 36px -4px rgba(15, 23, 42, 0.08), 0 0 0 1px var(--border);
+                display: flex;
+                flex-direction: column;
+                overflow: hidden;
+            }
+
+            header {
+                padding: 1.25rem 1.75rem;
+                border-bottom: 1px solid var(--border);
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                background: #ffffff;
+            }
+
+            .header-info h1 {
+                font-size: 1.25rem;
+                font-weight: 700;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                color: var(--text-main);
+            }
+
+            .badge {
+                font-size: 0.7rem;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+                background: var(--primary-soft);
+                color: var(--primary);
+                padding: 0.2rem 0.6rem;
+                border-radius: 9999px;
+            }
+
+            .header-info p {
+                font-size: 0.825rem;
+                color: var(--text-muted);
+                margin-top: 0.2rem;
+            }
+
+            #reset-btn {
+                background: transparent;
+                border: 1px solid var(--border);
+                padding: 0.45rem 0.85rem;
+                border-radius: 8px;
+                font-size: 0.8rem;
+                font-weight: 500;
+                color: var(--text-muted);
+                cursor: pointer;
+                transition: all 0.15s ease;
+            }
+
+            #reset-btn:hover {
+                border-color: #cbd5e1;
+                color: var(--text-main);
+                background: #f1f5f9;
+            }
+
+            #messages {
+                flex: 1;
+                overflow-y: auto;
+                padding: 1.5rem 1.75rem;
+                display: flex;
+                flex-direction: column;
+                gap: 1.25rem;
+            }
+
+            .msg-group {
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+                max-width: 82%;
+            }
+
+            .msg-group.user {
+                align-self: flex-end;
+                align-items: flex-end;
+            }
+
+            .msg-group.assistant {
+                align-self: flex-start;
+                align-items: flex-start;
+            }
+
+            .msg-bubble {
+                padding: 0.85rem 1.15rem;
+                border-radius: 14px;
+                font-size: 0.935rem;
+                line-height: 1.55;
+                word-wrap: break-word;
+            }
+
+            .user .msg-bubble {
+                background: var(--primary);
+                color: #ffffff;
+                border-bottom-right-radius: 4px;
+            }
+
+            .assistant .msg-bubble {
+                background: #f1f5f9;
+                color: var(--text-main);
+                border-bottom-left-radius: 4px;
+            }
+
+            .tool-card {
+                width: 100%;
+                background: var(--tool-bg);
+                border: 1px solid #fef3c7;
+                border-left: 4px solid var(--tool-border);
+                border-radius: 8px;
+                padding: 0.75rem 0.95rem;
+                font-size: 0.8rem;
+                color: #78350f;
+                font-family: 'JetBrains Mono', monospace;
+            }
+
+            .tool-header {
+                font-weight: 600;
+                display: flex;
+                align-items: center;
+                gap: 0.4rem;
+                margin-bottom: 0.35rem;
+                text-transform: uppercase;
+                letter-spacing: 0.04em;
+                font-size: 0.725rem;
+            }
+
+            .tool-body {
+                background: rgba(255, 255, 255, 0.7);
+                border-radius: 6px;
+                padding: 0.5rem 0.65rem;
+                white-space: pre-wrap;
+                word-break: break-all;
+                color: #92400e;
+                max-height: 150px;
+                overflow-y: auto;
+            }
+
+            #suggestions {
+                padding: 0.65rem 1.75rem;
+                display: flex;
+                gap: 0.5rem;
+                overflow-x: auto;
+                background: #ffffff;
+                border-top: 1px solid var(--border);
+            }
+
+            .chip {
+                background: #f8fafc;
+                border: 1px solid var(--border);
+                padding: 0.4rem 0.85rem;
+                border-radius: 9999px;
+                font-size: 0.785rem;
+                color: var(--text-muted);
+                cursor: pointer;
+                white-space: nowrap;
+                transition: all 0.15s ease;
+            }
+
+            .chip:hover {
+                border-color: var(--primary);
+                color: var(--primary);
+                background: var(--primary-soft);
+            }
+
+            #input-area {
+                padding: 1.25rem 1.75rem;
+                background: #ffffff;
+                display: flex;
+                gap: 0.75rem;
+                align-items: center;
+                border-top: 1px solid var(--border);
+            }
+
+            #user-input {
+                flex: 1;
+                background: #f8fafc;
+                border: 1px solid var(--border);
+                padding: 0.85rem 1.1rem;
+                font-size: 0.935rem;
+                border-radius: 12px;
+                outline: none;
+                color: var(--text-main);
+                transition: border-color 0.15s ease;
+            }
+
+            #user-input:focus {
+                border-color: var(--primary);
+                background: #ffffff;
+            }
+
+            #send-btn {
+                background: var(--primary);
+                color: #ffffff;
+                border: none;
+                padding: 0.85rem 1.4rem;
+                font-size: 0.875rem;
+                font-weight: 600;
+                border-radius: 12px;
+                cursor: pointer;
+                transition: background 0.15s ease;
+            }
+
+            #send-btn:hover {
+                background: var(--primary-hover);
+            }
+
+            #send-btn:disabled {
+                opacity: 0.4;
+                cursor: not-allowed;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="app-container">
+            <header>
+                <div class="header-info">
+                    <h1>NomadWings 🌴 <span class="badge">Backpacker Edition</span></h1>
+                    <p>Google Flights • Backpacker Purchasing Power • Visa Guidance</p>
+                </div>
+                <button id="reset-btn" onclick="clearSession()">Reset Trip</button>
+            </header>
+
+            <div id="messages"></div>
+
+            <div id="suggestions">
+                <button class="chip" onclick="useQuery('Find cheap one-way flights from Bangkok to Ho Chi Minh City on 2026-11-15')">✈️ Bangkok to Saigon Flights</button>
+                <button class="chip" onclick="useQuery('I have a $250 USD budget for Vietnam. How far will that go?')">🍜 $250 Budget in Vietnam</button>
+                <button class="chip" onclick="useQuery('Do US passport holders need a visa for Thailand or Vietnam?')">🛂 Visa Rules (US Passport)</button>
+            </div>
+
+            <div id="input-area">
+                <input
+                    type="text"
+                    id="user-input"
+                    placeholder="Ask about flights, budgets, or visa rules for Thailand and Vietnam..."
+                    autocomplete="off"
+                />
+                <button id="send-btn">Send</button>
+            </div>
+        </div>
+
+        <script>
+            const messages = document.getElementById("messages");
+            const userInput = document.getElementById("user-input");
+            const sendBtn = document.getElementById("send-btn");
+            let sessionId = null;
+
+            function appendMessage(role, text) {
+                const group = document.createElement("div");
+                group.className = "msg-group " + role;
+
+                const bubble = document.createElement("div");
+                bubble.className = "msg-bubble";
+                bubble.textContent = text;
+
+                group.appendChild(bubble);
+                messages.appendChild(group);
+                messages.scrollTop = messages.scrollHeight;
+                return group;
+            }
+
+            function appendToolCall(call, targetContainer) {
+                const card = document.createElement("div");
+                card.className = "tool-card";
+
+                const header = document.createElement("div");
+                header.className = "tool-header";
+                header.textContent = "⚡ Tool Call: " + call.name;
+
+                const body = document.createElement("div");
+                body.className = "tool-body";
+                body.textContent = "Input: " + JSON.stringify(call.args) + "\nOutput: " + call.result;
+
+                card.appendChild(header);
+                card.appendChild(body);
+                targetContainer.appendChild(card);
+            }
+
+            async function send() {
+                const text = userInput.value.trim();
+                if (!text) return;
+
+                userInput.value = "";
+                sendBtn.disabled = true;
+
+                appendMessage("user", text);
+
+                const assistantGroup = document.createElement("div");
+                assistantGroup.className = "msg-group assistant";
+                const loadingBubble = document.createElement("div");
+                loadingBubble.className = "msg-bubble";
+                loadingBubble.textContent = "Checking flights and travel data...";
+                assistantGroup.appendChild(loadingBubble);
+                messages.appendChild(assistantGroup);
+                messages.scrollTop = messages.scrollHeight;
+
+                try {
+                    const res = await fetch("/chat", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            message: text,
+                            session_id: sessionId,
+                        }),
+                    });
+                    const data = await res.json();
+                    sessionId = data.session_id;
+
+                    assistantGroup.removeChild(loadingBubble);
+
+                    for (const call of data.tool_calls || []) {
+                        appendToolCall(call, assistantGroup);
+                    }
+
+                    const replyBubble = document.createElement("div");
+                    replyBubble.className = "msg-bubble";
+                    replyBubble.textContent = data.response;
+                    assistantGroup.appendChild(replyBubble);
+                    
+                } catch (e) {
+                    loadingBubble.textContent = "Error: " + e.message;
+                } finally {
+                    sendBtn.disabled = false;
+                    userInput.focus();
+                    messages.scrollTop = messages.scrollHeight;
+                }
+            }
+
+            async function clearSession() {
+                if (sessionId) {
+                    await fetch(`/clear?session_id=${sessionId}`, { method: "POST" });
+                    sessionId = null;
+                }
+                messages.innerHTML = "";
+                appendMessage("assistant", "Sawasdee & Xin Chào! I am your budget travel agent for Thailand and Vietnam. Where are we heading?");
+            }
+
+            function useQuery(queryText) {
+                userInput.value = queryText;
+                send();
+            }
+
+            sendBtn.addEventListener("click", send);
+            userInput.addEventListener("keydown", (e) => {
+                if (e.key === "Enter") send();
+            });
+
+            // Greet user on load
+            appendMessage("assistant", "Sawasdee & Xin Chào! I am your budget travel agent for Thailand and Vietnam. Ask me to find cheap flights, convert your budget, or check tourist visa rules.");
+            userInput.focus();
+        </script>
+    </body>
+</html>
